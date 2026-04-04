@@ -1,130 +1,176 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pokemon TCG Inventory</title>
 
 <style>
+/* ===== GLOBAL STYLES ===== */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  background: #f5f5f5;
+  overflow-x: hidden; /* Prevent horizontal scroll when sidebar shifts */
+}
 
 /* ===== HEADER ===== */
 #header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 15px;
+  gap: 15px;
+  padding: 0 20px;
   background: white;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   position: sticky;
   top: 0;
-  z-index: 1000;
-  height: 60px;
+  z-index: 2000; /* Highest priority */
+  height: 70px;
 }
 
 #header h1 {
-  font-size: 20px;
+  font-size: 22px;
   margin: 0;
+  color: #333;
 }
 
-/* ===== BODY ===== */
-body {
-  font-family: Arial;
-  margin: 0;
-  background: #f5f5f5;
+/* ===== MENU BUTTON ===== */
+#menuBtn {
+  font-size: 24px;
+  background: #eee;
+  border: none;
+  border-radius: 8px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
-/* ===== LAYOUT ===== */
-#app {
-  display: flex;
+#menuBtn:hover {
+  background: #ddd;
 }
 
 /* ===== SIDEBAR ===== */
 #sidebar {
-  width: 250px;
+  width: 260px;
   background: white;
-  box-shadow: 2px 0 8px rgba(0,0,0,0.2);
-  padding: 20px;
+  box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+  padding: 25px 20px;
+  box-sizing: border-box; /* Crucial: includes padding in the 260px width */
 
   position: fixed;
-  top: 60px;
-  left: -250px; /* hidden initially */
-
-  height: calc(100% - 60px);
-  transition: 0.3s;
-  z-index: 1000;
+  top: 70px; /* Aligned below header */
+  left: -260px; /* Hidden off-screen */
+  height: calc(100vh - 70px);
+  
+  visibility: hidden; /* Prevents interaction when closed */
+  transition: all 0.3s ease-in-out;
+  z-index: 1500;
+  overflow-y: auto;
 }
 
 #sidebar.active {
   left: 0;
+  visibility: visible;
+}
+
+#sidebar h3 {
+  margin-top: 0;
+  font-size: 18px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 #sidebar button {
   display: block;
   width: 100%;
-  margin: 5px 0;
-  padding: 8px;
-  border: none;
-  background: #f0f0f0;
-  border-radius: 6px;
+  margin: 8px 0;
+  padding: 12px;
+  border: 1px solid #eee;
+  background: #fafafa;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+#sidebar button:hover {
+  background: #eef2ff;
+  border-color: #cbd5e1;
 }
 
 /* ===== MAIN CONTENT ===== */
 #mainContent {
   flex: 1;
-  transition: margin-left 0.3s;
+  transition: margin-left 0.3s ease-in-out;
+  padding: 20px;
 }
 
 #mainContent.shift {
-  margin-left: 250px;
+  margin-left: 260px;
 }
 
 /* ===== SEARCH ===== */
 #search {
-  width: calc(100% - 40px);
-  margin: 20px;
-  padding: 12px;
-  border-radius: 10px;
+  width: 100%;
+  max-width: 600px;
+  display: block;
+  margin: 0 auto 30px;
+  padding: 14px 20px;
+  border-radius: 12px;
   border: 1px solid #ddd;
   font-size: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  outline: none;
 }
 
-/* ===== CARDS ===== */
+#search:focus {
+  border-color: #aaa;
+}
+
+/* ===== CARDS GRID ===== */
 #cards {
-  padding: 0 20px 20px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
 }
 
 .card {
   background: white;
-  border-radius: 12px;
-  padding: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   text-align: center;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
 }
 
 .card img {
   width: 100%;
-  border-radius: 8px;
+  border-radius: 10px;
+  margin-bottom: 10px;
 }
 
 .card h3 {
   font-size: 16px;
-  margin: 8px 0;
+  margin: 10px 0 5px;
+  color: #222;
 }
 
 .card p {
   font-size: 14px;
-  margin: 2px 0;
+  margin: 4px 0;
+  color: #666;
 }
 
-/* ===== MENU BUTTON ===== */
-#menuBtn {
-  font-size: 20px;
-  background: #eee;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 12px;
-  cursor: pointer;
+.price {
+  color: #2c3e50;
+  font-weight: bold;
+  font-size: 15px !important;
 }
 
 </style>
@@ -132,51 +178,46 @@ body {
 
 <body>
 
-<!-- HEADER -->
 <div id="header">
   <button id="menuBtn">☰</button>
   <h1>PokeJek Database</h1>
 </div>
 
-<!-- APP LAYOUT -->
 <div id="app">
 
-  <!-- SIDEBAR -->
   <div id="sidebar">
     <h3>Filter by Set</h3>
-    <div id="setFilters"></div>
+    <div id="setFilters">
+       </div>
   </div>
 
-  <!-- MAIN CONTENT -->
   <div id="mainContent">
-
     <input 
       type="text" 
       id="search" 
-      placeholder="Search Pokemon..." 
+      placeholder="Search Pokemon name..." 
     />
-
     <div id="cards"></div>
-
   </div>
 
 </div>
 
 <script>
-
-// ===== MENU TOGGLE =====
+// ===== DOM ELEMENTS =====
 const menuBtn = document.getElementById("menuBtn");
 const sidebar = document.getElementById("sidebar");
 const mainContent = document.getElementById("mainContent");
+const searchInput = document.getElementById("search");
+const filterContainer = document.getElementById("setFilters");
 
+// ===== MENU TOGGLE =====
 menuBtn.onclick = () => {
   sidebar.classList.toggle("active");
   mainContent.classList.toggle("shift");
 };
 
-// ===== DATA FETCH =====
+// ===== DATA LOGIC =====
 const url = "https://opensheet.elk.sh/1pu3VU18JM7jmHzTAqONR7Yr8RlT6VdWQNyQMOPOcr0A/Sheet1";
-
 let allCards = [];
 
 fetch(url)
@@ -184,44 +225,58 @@ fetch(url)
   .then(data => {
     allCards = data;
     displayCards(allCards);
-
-    const sets = [...new Set(data.map(card => card.Set))];
-    const filterContainer = document.getElementById("setFilters");
-
-    // ALL BUTTON
-    const allBtn = document.createElement("button");
-    allBtn.innerText = "All";
-    allBtn.onclick = () => displayCards(allCards);
-    filterContainer.appendChild(allBtn);
-
-    // SET BUTTONS
-    sets.forEach(set => {
-      const btn = document.createElement("button");
-      btn.innerText = set;
-
-      btn.onclick = () => {
-        const filtered = allCards.filter(card => card.Set === set);
-        displayCards(filtered);
-      };
-
-      filterContainer.appendChild(btn);
-    });
+    createFilterButtons(data);
   });
+
+function createFilterButtons(data) {
+  const sets = [...new Set(data.map(card => card.Set))];
+  filterContainer.innerHTML = ""; // Clear existing
+
+  // ALL BUTTON
+  const allBtn = document.createElement("button");
+  allBtn.innerText = "Show All Sets";
+  allBtn.onclick = () => {
+    displayCards(allCards);
+    if(window.innerWidth < 768) menuBtn.click(); // Close menu on mobile after click
+  };
+  filterContainer.appendChild(allBtn);
+
+  // SET BUTTONS
+  sets.forEach(set => {
+    const btn = document.createElement("button");
+    btn.innerText = set;
+    btn.onclick = () => {
+      const filtered = allCards.filter(card => card.Set === set);
+      displayCards(filtered);
+      // Optional: Close sidebar automatically on selection if on small screen
+      if(window.innerWidth < 768) menuBtn.click(); 
+    };
+    filterContainer.appendChild(btn);
+  });
+}
 
 // ===== DISPLAY CARDS =====
 function displayCards(cards) {
   const container = document.getElementById("cards");
   container.innerHTML = "";
 
+  if(cards.length === 0) {
+    container.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>No Pokémon found.</p>";
+    return;
+  }
+
   cards.forEach(card => {
     const div = document.createElement("div");
     div.className = "card";
 
+    // Use a fallback image if the URL is missing
+    const imgUrl = card.Image || "https://via.placeholder.com/200x280?text=No+Image";
+
     div.innerHTML = `
-      <img src="${card.Image}" />
+      <img src="${imgUrl}" alt="${card.Name}" />
       <h3>${card.Name}</h3>
       <p>${card.Set}</p>
-      <p><strong>Rp ${Number(card.Price).toLocaleString("id-ID")}</strong></p>
+      <p class="price">Rp ${Number(card.Price).toLocaleString("id-ID")}</p>
       <p>${card.Stock > 0 ? "🟢 In Stock" : "🔴 Sold Out"}</p>
     `;
 
@@ -229,14 +284,12 @@ function displayCards(cards) {
   });
 }
 
-// ===== SEARCH =====
-document.getElementById("search").addEventListener("input", function(e) {
+// ===== SEARCH FUNCTIONALITY =====
+searchInput.addEventListener("input", (e) => {
   const keyword = e.target.value.toLowerCase();
-
   const filtered = allCards.filter(card =>
     card.Name.toLowerCase().includes(keyword)
   );
-
   displayCards(filtered);
 });
 
