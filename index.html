@@ -2,27 +2,12 @@
 <html>
 <head>
   <title>Pokemon TCG Inventory</title>
- <style>
-body {
-<!-- 🍔 Burger Button -->
-<button id="menuBtn" style="font-size:20px; padding:10px;">☰</button>
 
-<!-- 📂 Sidebar -->
-<div id="sidebar" style="
-  position: fixed;
-  top: 0;
-  left: -250px;
-  width: 250px;
-  height: 100%;
-  background: white;
-  box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+<style>
+body {
+  font-family: Arial;
   padding: 20px;
-  transition: 0.3s;
-  z-index: 1000;
-">
-  <h3>Filter by Set</h3>
-  <div id="setFilters"></div>
-</div>
+  background: #f5f5f5;
 }
 
 /* 🔥 Grid layout */
@@ -41,13 +26,11 @@ body {
   text-align: center;
 }
 
-/* 🖼️ Image styling */
 .card img {
   width: 100%;
   border-radius: 8px;
 }
 
-/* 📝 Text styling */
 .card h3 {
   font-size: 16px;
   margin: 8px 0;
@@ -57,7 +40,9 @@ body {
   font-size: 14px;
   margin: 2px 0;
 }
-   #menuBtn {
+
+/* 🍔 Menu button */
+#menuBtn {
   position: fixed;
   top: 10px;
   left: 10px;
@@ -65,11 +50,22 @@ body {
   background: white;
   border: none;
   border-radius: 8px;
+  padding: 10px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
-#sidebar h3 {
-  margin-top: 20px;
+/* 📂 Sidebar */
+#sidebar {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  width: 250px;
+  height: 100%;
+  background: white;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+  padding: 20px;
+  transition: 0.3s;
+  z-index: 1000;
 }
 
 #sidebar button {
@@ -82,18 +78,28 @@ body {
   border-radius: 6px;
 }
 </style>
+
 </head>
+
 <body>
+
+<!-- 🍔 Correct placement -->
+<button id="menuBtn">☰</button>
+
+<div id="sidebar">
+  <h3>Filter by Set</h3>
+  <div id="setFilters"></div>
+</div>
 
 <h1>PokeJek Database</h1>
 
-  <input 
+<input 
   type="text" 
   id="search" 
   placeholder="Search Pokemon..." 
   style="padding:10px; width:100%; margin-bottom:20px; font-size:16px;"
 />
-  
+
 <div id="cards"></div>
 
 <script>
@@ -101,23 +107,30 @@ const menuBtn = document.getElementById("menuBtn");
 const sidebar = document.getElementById("sidebar");
 
 menuBtn.onclick = () => {
-  if (sidebar.style.left === "0px") {
-    sidebar.style.left = "-250px";
-  } else {
-    sidebar.style.left = "0px";
-  }
+  sidebar.style.left = (sidebar.style.left === "0px") ? "-250px" : "0px";
 };
+
 const url = "https://opensheet.elk.sh/1pu3VU18JM7jmHzTAqONR7Yr8RlT6VdWQNyQMOPOcr0A/Sheet1";
 
 let allCards = [];
 
-// "All" button
+fetch(url)
+  .then(res => res.json())
+  .then(data => {
+    allCards = data;
+    displayCards(allCards);
+
+    // ✅ Generate set filters HERE
+    const sets = [...new Set(data.map(card => card.Set))];
+    const filterContainer = document.getElementById("setFilters");
+
+    // All button
     const allBtn = document.createElement("button");
     allBtn.innerText = "All";
     allBtn.onclick = () => displayCards(allCards);
     filterContainer.appendChild(allBtn);
 
-    // Create buttons per set
+    // Set buttons
     sets.forEach(set => {
       const btn = document.createElement("button");
       btn.innerText = set;
@@ -125,14 +138,13 @@ let allCards = [];
       btn.onclick = () => {
         const filtered = allCards.filter(card => card.Set === set);
         displayCards(filtered);
-
-        // optional: close sidebar after click
-        document.getElementById("sidebar").style.left = "-250px";
+        sidebar.style.left = "-250px";
       };
 
       filterContainer.appendChild(btn);
     });
   });
+
 function displayCards(cards) {
   const container = document.getElementById("cards");
   container.innerHTML = "";
@@ -142,18 +154,18 @@ function displayCards(cards) {
     div.className = "card";
 
     div.innerHTML = `
-  <img src="${card.Image}" />
-  <h3>${card.Name}</h3>
-  <p>${card.Set}</p>
-  <p><strong>Rp ${card.Price}</strong></p>
-  <p>${card.Stock > 0 ? "🟢 In Stock" : "🔴 Sold Out"}</p>
-`;
+      <img src="${card.Image}" />
+      <h3>${card.Name}</h3>
+      <p>${card.Set}</p>
+      <p><strong>Rp ${Number(card.Price).toLocaleString("id-ID")}</strong></p>
+      <p>${card.Stock > 0 ? "🟢 In Stock" : "🔴 Sold Out"}</p>
+    `;
 
     container.appendChild(div);
   });
 }
 
-// 🔍 Search function
+// 🔍 Search
 document.getElementById("search").addEventListener("input", function(e) {
   const keyword = e.target.value.toLowerCase();
 
@@ -164,5 +176,3 @@ document.getElementById("search").addEventListener("input", function(e) {
   displayCards(filtered);
 });
 </script>
-</body>
-</html>
