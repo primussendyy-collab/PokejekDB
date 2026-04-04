@@ -4,6 +4,23 @@
   <title>Pokemon TCG Inventory</title>
 
 <style>
+
+  #header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px;
+  background: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+#header h1 {
+  font-size: 20px;
+  margin: 0;
+}
 body {
   font-family: Arial;
   padding: 20px;
@@ -43,15 +60,11 @@ body {
 
 /* 🍔 Menu button */
 #menuBtn {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  z-index: 1100;
-  background: white;
+  font-size: 20px;
+  background: #eee;
   border: none;
   border-radius: 8px;
-  padding: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  padding: 8px 12px;
 }
 
 /* 📂 Sidebar */
@@ -83,21 +96,23 @@ body {
 
 <body>
 
-<!-- 🍔 Correct placement -->
-<button id="menuBtn">☰</button>
-
+<!-- 🍔 Sidebar (keep this) -->
 <div id="sidebar">
   <h3>Filter by Set</h3>
   <div id="setFilters"></div>
 </div>
 
-<h1>PokeJek Database</h1>
+<!-- 🔷 NEW HEADER -->
+<div id="header">
+  <button id="menuBtn">☰</button>
+  <h1>PokeJek Database</h1>
+</div>
 
+<!-- 🔍 Search -->
 <input 
   type="text" 
   id="search" 
   placeholder="Search Pokemon..." 
-  style="padding:10px; width:100%; margin-bottom:20px; font-size:16px;"
 />
 
 <div id="cards"></div>
