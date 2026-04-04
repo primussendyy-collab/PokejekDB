@@ -143,10 +143,18 @@ body {
 
 <script>
 
+<script>
+
+// ✅ 1. GET elements FIRST
+const menuBtn = document.getElementById("menuBtn");
+const sidebar = document.getElementById("sidebar");
 const overlay = document.getElementById("overlay");
 
+// ✅ 2. MENU LOGIC
 menuBtn.onclick = () => {
-  if (sidebar.style.left === "0px") {
+  const isOpen = sidebar.style.left === "0px";
+
+  if (isOpen) {
     sidebar.style.left = "-250px";
     overlay.style.display = "none";
   } else {
@@ -155,15 +163,10 @@ menuBtn.onclick = () => {
   }
 };
 
+// ✅ 3. OVERLAY CLICK
 overlay.onclick = () => {
   sidebar.style.left = "-250px";
   overlay.style.display = "none";
-};
-const menuBtn = document.getElementById("menuBtn");
-const sidebar = document.getElementById("sidebar");
-
-menuBtn.onclick = () => {
-  sidebar.style.left = (sidebar.style.left === "0px") ? "-250px" : "0px";
 };
 
 const url = "https://opensheet.elk.sh/1pu3VU18JM7jmHzTAqONR7Yr8RlT6VdWQNyQMOPOcr0A/Sheet1";
@@ -183,7 +186,11 @@ fetch(url)
     // All button
     const allBtn = document.createElement("button");
     allBtn.innerText = "All";
-    allBtn.onclick = () => displayCards(allCards);
+    allBtn.onclick = () => {
+  displayCards(allCards);
+  sidebar.style.left = "-250px";
+  overlay.style.display = "none";
+};
     filterContainer.appendChild(allBtn);
 
     // Set buttons
@@ -195,6 +202,7 @@ fetch(url)
         const filtered = allCards.filter(card => card.Set === set);
         displayCards(filtered);
         sidebar.style.left = "-250px";
+        overlay.style.display = "none";
       };
 
       filterContainer.appendChild(btn);
