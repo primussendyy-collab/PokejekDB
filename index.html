@@ -43,47 +43,28 @@ body {
 #sidebar {
   position: fixed;
   top: 60px;
-  left: -250px;
+  left: 0;
+  transform: translateX(-250px);
   width: 250px;
   height: 100%;
   background: white;
   box-shadow: 2px 0 8px rgba(0,0,0,0.2);
   padding: 20px;
-  transition: 0.3s;
-  z-index: 1100;
+  transition: transform 0.3s ease;
+  z-index: 900;
 }
 
-#sidebar button {
-  display: block;
-  width: 100%;
-  margin: 5px 0;
-  padding: 8px;
-  border: none;
-  background: #f0f0f0;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-/* 🌑 Overlay */
-#overlay {
-  position: fixed;
-  top: 60px;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.3);
-  display: none;
-  z-index: 1000;
+.sidebar-open #sidebar {
+  transform: translateX(0);
 }
 
 /* 📦 Main Content */
 #mainContent {
-  transition: margin-left 0.3s;
+  transition: transform 0.3s ease;
 }
 
-/* 👉 PUSH EFFECT */
 .sidebar-open #mainContent {
-  margin-left: 250px;
+  transform: translateX(250px);
 }
 
 /* 🔍 Search */
@@ -138,9 +119,6 @@ body {
   <div id="setFilters"></div>
 </div>
 
-<!-- 🌑 Overlay -->
-<div id="overlay"></div>
-
 <!-- 📦 MAIN CONTENT -->
 <div id="mainContent">
 
@@ -166,27 +144,12 @@ body {
 
 // ✅ ELEMENTS
 const menuBtn = document.getElementById("menuBtn");
-const sidebar = document.getElementById("sidebar");
-const overlay = document.getElementById("overlay");
-
 let isOpen = false;
 
-// ✅ MENU TOGGLE
+// ✅ CLEAN TOGGLE (NO OVERLAY, NO LEFT POSITIONING)
 menuBtn.onclick = () => {
   isOpen = !isOpen;
-
-  sidebar.style.left = isOpen ? "0px" : "-250px";
-  overlay.style.display = isOpen ? "block" : "none";
-
   document.body.classList.toggle("sidebar-open", isOpen);
-};
-
-// ✅ CLICK OUTSIDE
-overlay.onclick = () => {
-  isOpen = false;
-  sidebar.style.left = "-250px";
-  overlay.style.display = "none";
-  document.body.classList.remove("sidebar-open");
 };
 
 // 🌐 DATA SOURCE
@@ -207,10 +170,7 @@ fetch(url)
     // 🔘 ALL BUTTON
     const allBtn = document.createElement("button");
     allBtn.innerText = "All";
-    allBtn.onclick = () => {
-      displayCards(allCards);
-      closeSidebar();
-    };
+    allBtn.onclick = () => displayCards(allCards);
     filterContainer.appendChild(allBtn);
 
     // 🔘 SET BUTTONS
@@ -221,20 +181,11 @@ fetch(url)
       btn.onclick = () => {
         const filtered = allCards.filter(card => card.Set === set);
         displayCards(filtered);
-        closeSidebar();
       };
 
       filterContainer.appendChild(btn);
     });
   });
-
-// ✅ CLOSE SIDEBAR HELPER
-function closeSidebar() {
-  isOpen = false;
-  sidebar.style.left = "-250px";
-  overlay.style.display = "none";
-  document.body.classList.remove("sidebar-open");
-}
 
 // ✅ DISPLAY CARDS
 function displayCards(cards) {
