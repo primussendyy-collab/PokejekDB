@@ -145,13 +145,6 @@ body {
 
   let isOpen = false;
 
-menuBtn.onclick = () => {
-  isOpen = !isOpen;
-
-  sidebar.style.left = isOpen ? "0px" : "-250px";
-  overlay.style.display = isOpen ? "block" : "none";
-};
-
 // ✅ 1. GET elements FIRST
 const menuBtn = document.getElementById("menuBtn");
 const sidebar = document.getElementById("sidebar");
@@ -159,15 +152,10 @@ const overlay = document.getElementById("overlay");
 
 // ✅ 2. MENU LOGIC
 menuBtn.onclick = () => {
-  const isOpen = sidebar.style.left === "0px";
+  isOpen = !isOpen;
 
-  if (isOpen) {
-    sidebar.style.left = "-250px";
-    overlay.style.display = "none";
-  } else {
-    sidebar.style.left = "0px";
-    overlay.style.display = "block";
-  }
+  sidebar.style.left = isOpen ? "0px" : "-250px";
+  overlay.style.display = isOpen ? "block" : "none";
 };
 
 // ✅ 3. OVERLAY CLICK
