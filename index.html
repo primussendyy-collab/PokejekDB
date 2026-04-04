@@ -24,27 +24,45 @@
 <script>
 const url = "https://opensheet.elk.sh/1pu3VU18JM7jmHzTAqONR7Yr8RlT6VdWQNyQMOPOcr0A/Sheet1";
 
+let allCards = [];
+
 fetch(url)
   .then(res => res.json())
   .then(data => {
-    const container = document.getElementById("cards");
-
-    data.forEach(card => {
-      const div = document.createElement("div");
-      div.className = "card";
-
-      div.innerHTML = `
-        <h3>${card.Name}</h3>
-        <img src="${card.Image}" />
-        <p>Set: ${card.Set}</p>
-        <p>Price: Rp ${card.Price}</p>
-        <p>Stock: ${card.Stock}</p>
-      `;
-
-      container.appendChild(div);
-    });
+    allCards = data;
+    displayCards(allCards);
   });
-</script>
 
+function displayCards(cards) {
+  const container = document.getElementById("cards");
+  container.innerHTML = "";
+
+  cards.forEach(card => {
+    const div = document.createElement("div");
+    div.className = "card";
+
+    div.innerHTML = `
+      <h3>${card.Name}</h3>
+      <img src="${card.Image}" style="width:120px;" />
+      <p>Set: ${card.Set}</p>
+      <p>Price: Rp ${card.Price}</p>
+      <p>Stock: ${card.Stock}</p>
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+// 🔍 Search function
+document.getElementById("search").addEventListener("input", function(e) {
+  const keyword = e.target.value.toLowerCase();
+
+  const filtered = allCards.filter(card =>
+    card.Name.toLowerCase().includes(keyword)
+  );
+
+  displayCards(filtered);
+});
+</script>
 </body>
 </html>
