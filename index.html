@@ -11,7 +11,7 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   background: #f5f5f5;
-  overflow-x: hidden; /* Prevent horizontal scroll when sidebar shifts */
+  overflow-x: hidden;
 }
 
 /* ===== HEADER ===== */
@@ -24,7 +24,7 @@ body {
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   position: sticky;
   top: 0;
-  z-index: 2000; /* Highest priority */
+  z-index: 2000;
   height: 70px;
 }
 
@@ -55,14 +55,14 @@ body {
   background: white;
   box-shadow: 4px 0 10px rgba(0,0,0,0.1);
   padding: 25px 20px;
-  box-sizing: border-box; /* Crucial: includes padding in the 260px width */
+  box-sizing: border-box;
 
   position: fixed;
-  top: 70px; /* Aligned below header */
-  left: -260px; /* Hidden off-screen */
+  top: 70px;
+  left: -260px; 
   height: calc(100vh - 70px);
   
-  visibility: hidden; /* Prevents interaction when closed */
+  visibility: hidden;
   transition: all 0.3s ease-in-out;
   z-index: 1500;
   overflow-y: auto;
@@ -125,10 +125,6 @@ body {
   outline: none;
 }
 
-#search:focus {
-  border-color: #aaa;
-}
-
 /* ===== CARDS GRID ===== */
 #cards {
   display: grid;
@@ -172,10 +168,8 @@ body {
   font-weight: bold;
   font-size: 15px !important;
 }
-
 </style>
 </head>
-
 <body>
 
 <div id="header">
@@ -184,26 +178,18 @@ body {
 </div>
 
 <div id="app">
-
   <div id="sidebar">
     <h3>Filter by Set</h3>
-    <div id="setFilters">
-       </div>
+    <div id="setFilters"></div>
   </div>
 
   <div id="mainContent">
-    <input 
-      type="text" 
-      id="search" 
-      placeholder="Search Pokemon name..." 
-    />
+    <input type="text" id="search" placeholder="Search Pokemon name..." />
     <div id="cards"></div>
   </div>
-
 </div>
 
 <script>
-// ===== DOM ELEMENTS =====
 const menuBtn = document.getElementById("menuBtn");
 const sidebar = document.getElementById("sidebar");
 const mainContent = document.getElementById("mainContent");
@@ -230,32 +216,29 @@ fetch(url)
 
 function createFilterButtons(data) {
   const sets = [...new Set(data.map(card => card.Set))];
-  filterContainer.innerHTML = ""; // Clear existing
+  filterContainer.innerHTML = ""; 
 
-  // ALL BUTTON
   const allBtn = document.createElement("button");
   allBtn.innerText = "Show All Sets";
   allBtn.onclick = () => {
     displayCards(allCards);
-    if(window.innerWidth < 768) menuBtn.click(); // Close menu on mobile after click
+    if(window.innerWidth < 768) menuBtn.click();
   };
   filterContainer.appendChild(allBtn);
 
-  // SET BUTTONS
   sets.forEach(set => {
     const btn = document.createElement("button");
     btn.innerText = set;
     btn.onclick = () => {
       const filtered = allCards.filter(card => card.Set === set);
       displayCards(filtered);
-      // Optional: Close sidebar automatically on selection if on small screen
       if(window.innerWidth < 768) menuBtn.click(); 
     };
     filterContainer.appendChild(btn);
   });
 }
 
-// ===== DISPLAY CARDS =====
+// ===== DISPLAY CARDS (WITH GOOGLE DRIVE AUTO-FIX) =====
 function displayCards(cards) {
   const container = document.getElementById("cards");
   container.innerHTML = "";
@@ -266,25 +249,39 @@ function displayCards(cards) {
   }
 
   cards.forEach(card => {
+    let imgUrl = card.Image || "";
+
+    // Fix Google Drive links automatically
+    if (imgUrl.includes("drive.google.com")) {
+      let fileId = "";
+      if (imgUrl.includes("/file/d/")) {
+        fileId = imgUrl.split("/file/d/")[1].split("/")[0];
+      } else if (imgUrl.includes("id=")) {
+        fileId = imgUrl.split("id=")[1].split("&")[0];
+      }
+      
+      if (fileId) {
+        // Converting to the high-performance thumbnail format
+        imgUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
+      }
+    }
+
+    const finalImg = imgUrl || "https://via.placeholder.com/200x280?text=No+Image";
+
     const div = document.createElement("div");
     div.className = "card";
-
-    // Use a fallback image if the URL is missing
-    const imgUrl = card.Image || "https://via.placeholder.com/200x280?text=No+Image";
-
     div.innerHTML = `
-      <img src="${imgUrl}" alt="${card.Name}" />
+      <img src="${finalImg}" alt="${card.Name}" />
       <h3>${card.Name}</h3>
       <p>${card.Set}</p>
       <p class="price">Rp ${Number(card.Price).toLocaleString("id-ID")}</p>
       <p>${card.Stock > 0 ? "🟢 In Stock" : "🔴 Sold Out"}</p>
     `;
-
     container.appendChild(div);
   });
 }
 
-// ===== SEARCH FUNCTIONALITY =====
+// ===== SEARCH =====
 searchInput.addEventListener("input", (e) => {
   const keyword = e.target.value.toLowerCase();
   const filtered = allCards.filter(card =>
@@ -292,7 +289,6 @@ searchInput.addEventListener("input", (e) => {
   );
   displayCards(filtered);
 });
-
 </script>
 
 </body>
