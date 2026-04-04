@@ -2,11 +2,46 @@
 <html>
 <head>
   <title>Pokemon TCG Inventory</title>
-  <style>
-    body { font-family: Arial; padding: 20px; }
-    .card { border: 1px solid #ddd; padding: 10px; margin: 10px; }
-    img { width: 100px; }
-  </style>
+ <style>
+body {
+  font-family: Arial;
+  padding: 20px;
+  background: #f5f5f5;
+}
+
+/* 🔥 Grid layout */
+#cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 15px;
+}
+
+/* 🧱 Card style */
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+/* 🖼️ Image styling */
+.card img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+/* 📝 Text styling */
+.card h3 {
+  font-size: 16px;
+  margin: 8px 0;
+}
+
+.card p {
+  font-size: 14px;
+  margin: 2px 0;
+}
+</style>
 </head>
 <body>
 
@@ -42,12 +77,12 @@ function displayCards(cards) {
     div.className = "card";
 
     div.innerHTML = `
-      <h3>${card.Name}</h3>
-      <img src="${card.Image}" style="width:120px;" />
-      <p>Set: ${card.Set}</p>
-      <p>Price: Rp ${card.Price}</p>
-      <p>Stock: ${card.Stock}</p>
-    `;
+  <img src="${card.Image}" />
+  <h3>${card.Name}</h3>
+  <p>${card.Set}</p>
+  <p><strong>Rp ${card.Price}</strong></p>
+  <p>${card.Stock > 0 ? "🟢 In Stock" : "🔴 Sold Out"}</p>
+`;
 
     container.appendChild(div);
   });
