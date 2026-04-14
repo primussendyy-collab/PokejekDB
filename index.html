@@ -6,40 +6,82 @@
   <title>PokeJek Database</title>
   <style>
     /* ===== GLOBAL STYLES ===== */
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #f5f5f5; overflow-x: hidden; }
-    #header { display: flex; align-items: center; gap: 15px; padding: 0 20px; background: white; box-shadow: 0 2px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 2000; height: 70px; }
-    #header h1 { font-size: 22px; margin: 0; color: #333; }
-    #menuBtn { font-size: 24px; background: #eee; border: none; border-radius: 8px; padding: 5px 12px; cursor: pointer; transition: background 0.2s; }
-    #menuBtn:hover { background: #ddd; }
+    body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; background: #f8f9fa; color: #333; overflow-x: hidden; }
+    
+    #header { 
+        display: flex; align-items: center; gap: 15px; padding: 0 15px; 
+        background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
+        position: sticky; top: 0; z-index: 2000; height: 60px; 
+    }
+    #header h1 { font-size: 18px; margin: 0; flex-grow: 1; }
+    #menuBtn { font-size: 20px; background: #f0f0f0; border: none; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
 
-    /* ===== SIDEBAR ===== */
-    #sidebar { width: 260px; background: white; box-shadow: 4px 0 10px rgba(0,0,0,0.1); padding: 20px; box-sizing: border-box; position: fixed; top: 70px; left: -260px; height: calc(100vh - 70px); visibility: hidden; transition: all 0.3s ease-in-out; z-index: 1500; overflow-y: auto; }
-    #sidebar.active { left: 0; visibility: visible; }
-    #sidebar h3 { margin: 20px 0 10px 0; font-size: 16px; border-bottom: 2px solid #f0f0f0; padding-bottom: 5px; }
-
-    /* TCG Selector Buttons */
-    .tcg-toggle { display: flex; gap: 10px; margin-bottom: 20px; }
-    .tcg-toggle button { flex: 1; padding: 10px; border: 2px solid #eee; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-    .tcg-toggle button.active-pkmn { background: #ffcb05; color: #3c5aa6; border-color: #3c5aa6; }
-    .tcg-toggle button.active-op { background: #e63946; color: white; border-color: #9d1d27; }
-
-    #setFilters button { display: block; width: 100%; margin: 8px 0; padding: 12px; border: 1px solid #eee; background: #fafafa; border-radius: 8px; cursor: pointer; text-align: left; font-size: 14px; transition: 0.2s; }
-    #setFilters button:hover { background: #eef2ff; border-color: #cbd5e1; }
+    /* ===== SIDEBAR & OVERLAY ===== */
+    #sidebar { 
+        width: 280px; background: white; box-shadow: 10px 0 20px rgba(0,0,0,0.15); 
+        padding: 20px; box-sizing: border-box; position: fixed; 
+        top: 0; left: -300px; height: 100vh; transition: 0.3s ease; z-index: 2500; overflow-y: auto; 
+    }
+    #sidebar.active { left: 0; }
+    
+    #overlay { 
+        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        background: rgba(0,0,0,0.5); z-index: 2400; 
+    }
+    #overlay.active { display: block; }
 
     /* ===== MAIN CONTENT ===== */
-    #mainContent { flex: 1; transition: margin-left 0.3s ease-in-out; padding: 20px; }
-    #mainContent.shift { margin-left: 260px; }
-    #search { width: 100%; max-width: 600px; display: block; margin: 0 auto 30px; padding: 14px 20px; border-radius: 12px; border: 1px solid #ddd; font-size: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); outline: none; }
-    #cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
-    .card { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center; transition: transform 0.2s; }
-    .card:hover { transform: translateY(-5px); }
-    .card img { width: 100%; border-radius: 10px; margin-bottom: 10px; aspect-ratio: 2/2.8; object-fit: cover; }
-    .card h3 { font-size: 16px; margin: 10px 0 5px; color: #222; }
-    .card p { font-size: 14px; margin: 4px 0; color: #666; }
-    .price { color: #2c3e50; font-weight: bold; font-size: 15px !important; }
+    #mainContent { padding: 15px; max-width: 1200px; margin: 0 auto; }
+    
+    #search { 
+        width: 100%; box-sizing: border-box; margin-bottom: 20px; padding: 12px 15px; 
+        border-radius: 10px; border: 1px solid #ddd; font-size: 16px; 
+        outline: none; -webkit-appearance: none;
+    }
+
+    /* ===== CARD GRID (4 COLUMNS) ===== */
+    #cards { 
+        display: grid; 
+        grid-template-columns: repeat(4, 1fr); /* 4 cards side-by-side */
+        gap: 8px; 
+    }
+
+    .card { 
+        background: white; border-radius: 8px; padding: 8px; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center; 
+        display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .card img { width: 100%; border-radius: 5px; aspect-ratio: 2/2.8; object-fit: cover; }
+    .card h3 { font-size: 11px; margin: 5px 0 2px; line-height: 1.1; height: 24px; overflow: hidden; color: #111; }
+    .card p { font-size: 10px; margin: 1px 0; color: #777; }
+    .price { color: #d63031; font-weight: bold; font-size: 11px !important; margin-top: 4px !important; }
+
+    /* TCG Selector Buttons */
+    .tcg-toggle { display: flex; gap: 8px; margin-bottom: 20px; }
+    .tcg-toggle button { flex: 1; padding: 12px 5px; border-radius: 8px; border: 1px solid #ddd; font-weight: bold; cursor: pointer; }
+    .active-pkmn { background: #ffcb05; color: #3c5aa6; border-color: #3c5aa6 !important; }
+    .active-op { background: #e63946; color: white; border-color: #9d1d27 !important; }
+    
+    #setFilters button { 
+        width: 100%; text-align: left; padding: 12px; margin-bottom: 8px; 
+        border-radius: 8px; border: 1px solid #eee; background: #fdfdfd; cursor: pointer;
+    }
+
+    /* Responsive adjustments for very small or larger screens */
+    @media (max-width: 380px) {
+        #cards { grid-template-columns: repeat(2, 1fr); } /* Drop to 2 if screen is tiny */
+    }
+    @media (min-width: 768px) {
+        #cards { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+        .card h3 { font-size: 16px; height: auto; }
+        .card p { font-size: 14px; }
+        .price { font-size: 15px !important; }
+    }
   </style>
 </head>
 <body>
+
+<div id="overlay"></div>
 
 <div id="header">
   <button id="menuBtn">☰</button>
@@ -65,13 +107,12 @@
 <script>
 const menuBtn = document.getElementById("menuBtn");
 const sidebar = document.getElementById("sidebar");
-const mainContent = document.getElementById("mainContent");
+const overlay = document.getElementById("overlay");
 const searchInput = document.getElementById("search");
 const filterContainer = document.getElementById("setFilters");
 const btnPkmn = document.getElementById("btnPkmn");
 const btnOP = document.getElementById("btnOP");
 
-// URLs for the different sheets
 const endpoints = {
   pokemon: "https://opensheet.elk.sh/1pu3VU18JM7jmHzTAqONR7Yr8RlT6VdWQNyQMOPOcr0A/Sheet1",
   onepiece: "https://opensheet.elk.sh/1pu3VU18JM7jmHzTAqONR7Yr8RlT6VdWQNyQMOPOcr0A/Sheet2"
@@ -79,10 +120,10 @@ const endpoints = {
 
 let allCards = [];
 
-// ===== INITIAL LOAD =====
+// Initial Load
 loadData("pokemon");
 
-// ===== TCG SWITCHER =====
+// TCG Switcher
 btnPkmn.onclick = () => {
   btnPkmn.classList.add("active-pkmn");
   btnOP.classList.remove("active-op");
@@ -102,32 +143,44 @@ function loadData(tcgType) {
       allCards = data;
       displayCards(allCards);
       createFilterButtons(data);
-      searchInput.value = ""; // Reset search on switch
+      searchInput.value = ""; 
     });
 }
 
+// Sidebar Toggle Logic
 menuBtn.onclick = () => {
   sidebar.classList.toggle("active");
-  mainContent.classList.toggle("shift");
+  overlay.classList.toggle("active");
+};
+
+overlay.onclick = () => {
+  sidebar.classList.remove("active");
+  overlay.classList.remove("active");
 };
 
 function createFilterButtons(data) {
   const sets = [...new Set(data.map(card => card.Set))];
   filterContainer.innerHTML = ""; 
 
-  const allBtn = document.createElement("button");
-  allBtn.innerText = "Show All Sets";
-  allBtn.onclick = () => displayCards(allCards);
-  filterContainer.appendChild(allBtn);
-
-  sets.forEach(set => {
+  const createBtn = (text, filterFn) => {
     const btn = document.createElement("button");
-    btn.innerText = set;
+    btn.innerText = text;
     btn.onclick = () => {
-      const filtered = allCards.filter(card => card.Set === set);
-      displayCards(filtered);
+      filterFn();
+      if (window.innerWidth < 768) {
+        sidebar.classList.remove("active");
+        overlay.classList.remove("active");
+      }
     };
     filterContainer.appendChild(btn);
+  };
+
+  createBtn("Show All Sets", () => displayCards(allCards));
+  sets.forEach(set => {
+    createBtn(set, () => {
+      const filtered = allCards.filter(card => card.Set === set);
+      displayCards(filtered);
+    });
   });
 }
 
@@ -154,7 +207,7 @@ function displayCards(cards) {
       <h3>${card.Name}</h3>
       <p><strong>${card.Set}</strong></p>
       <p class="price">Rp ${Number(card.Price).toLocaleString("id-ID")}</p>
-      <p>${card.Stock > 0 ? "🟢 In Stock" : "🔴 Sold Out"}</p>
+      <p>${card.Stock > 0 ? "🟢 Stock" : "🔴 Sold"}</p>
     `;
     container.appendChild(div);
   });
@@ -166,5 +219,6 @@ searchInput.addEventListener("input", (e) => {
   displayCards(filtered);
 });
 </script>
+
 </body>
 </html>
